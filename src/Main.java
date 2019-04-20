@@ -1,6 +1,9 @@
-import Domain.InvoiceValidator;
+import Domain.Car;
+import Domain.CarValidator;
+import Domain.IValidator;
+import Repository.IRepository;
 import Repository.InMemoryRepository;
-import Service.InvoiceService;
+import Service.CarService;
 import UI.Controller;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -8,29 +11,29 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+        CarValidator carValidator = new CarValidator();
+        IRepository<Car> carIRepository = new InMemoryRepository<>(carValidator);
+        CarService carService = new CarService(carIRepository);
+
+
+        carService.insert("1","sedan",1110,25);
+        carService.insert("2","sport",2000,30);
+        carService.insert("3","camioneta",4000,50);
+
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("UI/sample.fxml"));
         Parent root = fxmlLoader.load();
-        Controller controller =  fxmlLoader.getController();
-
-        InvoiceValidator validator = new InvoiceValidator();
-        InMemoryRepository repository = new InMemoryRepository(validator);
-        InvoiceService service = new InvoiceService(repository);
-
-        service.insert("1",20,"gas","22.11.2013");
-        service.insert("2",20,"cosmetics","20.11.2013");
-        service.insert("3",20,"food","21.11.2013");
-        service.insert("4",20,"city break","20.11.2013");
-        service.insert("5",20,"taxes","20.11.2013");
-        service.insert("6",20,"electricity","19.11.2013");
-
-        controller.setServices(service);
+        Controller controller = fxmlLoader.getController();
+        controller.setServices(carService);
 
 
-        primaryStage.setTitle("Invoice Manager");
+        primaryStage.setTitle("Car Manager");
         primaryStage.setScene(new Scene(root, 650, 500));
         primaryStage.show();
     }
@@ -40,3 +43,5 @@ public class Main extends Application {
         launch(args);
     }
 }
+
+

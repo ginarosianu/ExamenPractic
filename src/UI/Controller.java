@@ -1,7 +1,7 @@
 package UI;
 
-import Domain.Invoice;
-import Service.InvoiceService;
+import Domain.Car;
+import Service.CarService;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,21 +24,18 @@ import java.util.logging.Logger;
 public class Controller {
 
 
-    public TableView tableViewInvoices;
+    public CarService service;
+    public TableView tableViewCars;
     public TableColumn tableColumnId;
-    public TableColumn tableColumnAmmount;
-    public TableColumn tableColumnDescription;
-    public TableColumn tableColumnDate;
-    public TextField txtInvoiceDateForSum;
-    public Label sum;
-
-    public InvoiceService service;
+    public TableColumn tableColumnModel;
+    public TableColumn tableColumnKilometers;
+    public TableColumn tableColumnPrice;
 
 
-    private ObservableList<Invoice> invoices = FXCollections.observableArrayList();
+    private ObservableList<Car> cars = FXCollections.observableArrayList();
 
 
-    public void setServices(InvoiceService service) {
+    public void setServices(CarService service) {
         this.service = service;
     }
 
@@ -46,26 +43,26 @@ public class Controller {
     private void initialize() {
 
         Platform.runLater(() -> {
-            invoices.addAll(service.getAll());
-            tableViewInvoices.setItems(invoices);
+            cars.addAll(service.getAll());
+            tableViewCars.setItems(cars);
         });
     }
 
 
-    public void btnInvoiceAddClick(ActionEvent actionEvent) {
+    public void btnCarAddClick(ActionEvent actionEvent) {
         FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(getClass().getResource("invoiceAdd.fxml"));
+        fxmlLoader.setLocation(getClass().getResource("carAdd.fxml"));
         try {
             Scene scene = new Scene(fxmlLoader.load(), 600, 200);
             Stage stage = new Stage();
             stage.setTitle("Add invoice");
             stage.setScene(scene);
             stage.initModality(Modality.APPLICATION_MODAL);
-            InvoiceAddController controller = fxmlLoader.getController();
+            CarAddController controller = fxmlLoader.getController();
             controller.setService(service);
             stage.showAndWait();
-            invoices.clear();
-            invoices.addAll(service.getAll());
+            cars.clear();
+            cars.addAll(service.getAll());
         } catch (IOException e) {
             Logger logger = Logger.getLogger(getClass().getName());
             logger.log(Level.SEVERE, "Failed to create new Window: Movie update.", e);
@@ -73,23 +70,7 @@ public class Controller {
 
     }
 
-    public void btnInvoicesSumClick(ActionEvent actionEvent) {
-        String a = txtInvoiceDateForSum.getText();
 
-        try {
-            if (a.charAt(2) != '.' || a.charAt(5) != '.') {
-                throw new RuntimeException("Date format should be dd.mm.yyy\n");
-            }
-        } catch (RuntimeException rex) {
-            Common.showValidationError(rex.getMessage());
-        }
-        int sumOfAll = 0;
-        List<Invoice> all = service.getAll();
-        for (Invoice i : all) {
-            if (i.getDate().equals(a)) {
-                sumOfAll += i.getAmmount();
-            }
-        }
-        sum.setText(sumOfAll + "");
-    }
+//    public void btnCarAddClick(ActionEvent actionEvent) {
+//    }
 }
